@@ -1,59 +1,38 @@
 return {
-  { "nvim-treesitter/playground", cmd = "TSPlaygroundToggle" },
-
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = {
-      ensure_installed = {
-        -- "astro",
+    branch = "main",
+    lazy = false,
+    build = ":TSUpdate",
+    config = function()
+      require("nvim-treesitter").setup()
+
+      local ensure_installed = {
         "cmake",
         "css",
-        -- "fish",
         "gitignore",
-        -- "go",
-        -- "graphql",
         "http",
-        -- "java",
-        -- "php",
         "rust",
         "ron",
         "scss",
         "sql",
-        -- "svelte",
-      },
+      }
 
-      -- matchup = {
-      -- 	enable = true,
-      -- },
+      local installed = require("nvim-treesitter.config").get_installed("parsers")
+      local not_installed = vim.tbl_filter(function(parser)
+        return not vim.tbl_contains(installed, parser)
+      end, ensure_installed)
 
-      -- https://github.com/nvim-treesitter/playground#query-linter
-      query_linter = {
-        enable = true,
-        use_virtual_text = true,
-        lint_events = { "BufWrite", "CursorHold" },
-      },
+      if #not_installed > 0 then
+        require("nvim-treesitter").install(not_installed)
+      end
 
-      playground = {
-        enable = true,
-        disable = {},
-        updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
-        persist_queries = true, -- Whether the query persists across vim sessions
-        keybindings = {
-          toggle_query_editor = "o",
-          toggle_hl_groups = "i",
-          toggle_injected_languages = "t",
-          toggle_anonymous_nodes = "a",
-          toggle_language_display = "I",
-          focus_language = "f",
-          unfocus_language = "F",
-          update = "R",
-          goto_node = "<cr>",
-          show_help = "?",
-        },
-      },
-    },
-    config = function(_, opts)
-      require("nvim-treesitter.configs").setup(opts)
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function()
+          pcall(vim.treesitter.start)
+          vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end,
+      })
 
       -- MDX
       vim.filetype.add({
