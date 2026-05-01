@@ -24,8 +24,7 @@ return {
       keys[#keys + 1] = {
         "gd",
         function()
-          -- DO NOT RESUSE WINDOW
-          require("telescope.builtin").lsp_definitions({ reuse_win = false })
+          vim.lsp.buf.definition()
         end,
         desc = "Goto Definition",
         has = "definition",
