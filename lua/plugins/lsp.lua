@@ -1,7 +1,7 @@
 return {
   -- tools
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = function(_, opts)
       vim.list_extend(opts.ensure_installed, {
         "stylua",
@@ -19,17 +19,6 @@ return {
   -- lsp servers
   {
     "neovim/nvim-lspconfig",
-    init = function()
-      local keys = require("lazyvim.plugins.lsp.keymaps").get()
-      keys[#keys + 1] = {
-        "gd",
-        function()
-          vim.lsp.buf.definition()
-        end,
-        desc = "Goto Definition",
-        has = "definition",
-      }
-    end,
     opts = {
       inlay_hints = { enabled = false },
       servers = {
