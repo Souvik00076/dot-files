@@ -66,6 +66,9 @@ return {
         blame = "<Leader>gb",
         -- Open file/folder in git repository
         browse = "<Leader>go",
+        -- Disabled: <Leader>gd/<Leader>gD belong to diffview.nvim
+        diff = "",
+        diff_close = "",
       },
     },
   },

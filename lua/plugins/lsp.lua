@@ -10,7 +10,6 @@ return {
         "shellcheck",
         "shfmt",
         "tailwindcss-language-server",
-        "typescript-language-server",
         "css-lsp",
       })
     end,
@@ -19,20 +18,33 @@ return {
   -- lsp servers
   {
     "neovim/nvim-lspconfig",
-    init = function()
-      local keys = require("lazyvim.plugins.lsp.keymaps").get()
-      keys[#keys + 1] = {
-        "gd",
-        function()
-          vim.lsp.buf.definition()
-        end,
-        desc = "Goto Definition",
-        has = "definition",
-      }
-    end,
     opts = {
       inlay_hints = { enabled = false },
       servers = {
+        ["*"] = {
+          keys = {
+            {
+              "gd",
+              function()
+                vim.lsp.buf.definition()
+              end,
+              desc = "Goto Definition",
+              has = "definition",
+            },
+          },
+        },
+        pyright = {
+          settings = {
+            python = {
+              analysis = {
+                autoImportCompletions = true,
+                typeCheckingMode = "basic",
+                diagnosticMode = "openFilesOnly",
+                useLibraryCodeForTypes = true,
+              },
+            },
+          },
+        },
         rust_analyzer = {
           mason = false,
           cmd = { vim.fn.expand("~/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rust-analyzer") },
@@ -61,7 +73,7 @@ return {
             return require("lspconfig.util").root_pattern(".git")(...)
           end,
         },
-        tsserver = {
+        ts_ls = {
           root_dir = function(...)
             return require("lspconfig.util").root_pattern(".git")(...)
           end,
